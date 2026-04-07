@@ -257,8 +257,14 @@ async function buildContainerArgs(
   // entirely because the gateway's MITM proxy breaks the SDK's OAuth auth flow.
   const oauthEnv = readEnvFile(['CLAUDE_CODE_OAUTH_TOKEN']);
   if (oauthEnv.CLAUDE_CODE_OAUTH_TOKEN) {
-    args.push('-e', `CLAUDE_CODE_OAUTH_TOKEN=${oauthEnv.CLAUDE_CODE_OAUTH_TOKEN}`);
-    logger.info({ containerName }, 'OAuth token injected — skipping OneCLI gateway');
+    args.push(
+      '-e',
+      `CLAUDE_CODE_OAUTH_TOKEN=${oauthEnv.CLAUDE_CODE_OAUTH_TOKEN}`,
+    );
+    logger.info(
+      { containerName },
+      'OAuth token injected — skipping OneCLI gateway',
+    );
   } else {
     // OneCLI gateway handles credential injection for API key auth.
     // The gateway intercepts HTTPS traffic and injects API keys.
