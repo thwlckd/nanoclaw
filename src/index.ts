@@ -286,9 +286,9 @@ async function processGroupMessages(chatJid: string): Promise<boolean> {
 
   // Thread context for routing replies. Resolved fresh each time the agent
   // produces output so piped follow-up messages from a different thread are
-  // routed correctly. Only set when the most recent user message was in a
-  // thread (thread_id != null); top-level messages get no threadTs so the
-  // reply goes to the main channel.
+  // routed correctly. For threaded messages, uses the parent thread_ts;
+  // for top-level messages, uses the message's own ts so the reply starts
+  // a new thread under that message.
   let lastResolvedThreadTs: string | undefined;
   let lastResolvedForMsgId: string | undefined;
 
@@ -298,7 +298,7 @@ async function processGroupMessages(chatJid: string): Promise<boolean> {
     // Only re-resolve when the latest user message changed (new piped message)
     if (row.id !== lastResolvedForMsgId) {
       lastResolvedForMsgId = row.id;
-      lastResolvedThreadTs = row.thread_id ?? undefined;
+      lastResolvedThreadTs = row.thread_id || row.id;
     }
     return lastResolvedThreadTs;
   };
