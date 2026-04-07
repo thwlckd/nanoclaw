@@ -399,6 +399,18 @@ export function getMessagesSince(
     .all(chatJid, sinceTimestamp, `${botPrefix}:%`, limit) as NewMessage[];
 }
 
+export function getLastUserMessageThreadId(
+  chatJid: string,
+): { thread_id: string | null; id: string } | undefined {
+  return db
+    .prepare(
+      `SELECT id, thread_id FROM messages
+       WHERE chat_jid = ? AND is_bot_message = 0
+       ORDER BY timestamp DESC LIMIT 1`,
+    )
+    .get(chatJid) as { thread_id: string | null; id: string } | undefined;
+}
+
 export function getLastBotMessageTimestamp(
   chatJid: string,
   botPrefix: string,
